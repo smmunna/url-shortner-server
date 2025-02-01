@@ -1,19 +1,40 @@
 import { NextFunction, Request, Response } from "express";
+import { insertOne } from "../../lib/dbQuery";
 
 
 
-const createUrls = (req: Request, res: Response, next: NextFunction) => {
+const createUrls = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const { url } = req.body;
 
-        const shortCode = Math.random().toString(36).substring(2, 8);;
-        const shortenerUrl =`${req.protocol}://${req.host}/${shortCode}`;
+        if (!url) {
+            res.status(404).json({
+                message: 'URL is required',
+            })
+        }
+        else {
+            const shortCode = Math.random().toString(36).substring(2, 8);;
+            const shortenerUrl = `${req.protocol}://${req.get('host')}/` + shortCode;
 
-        res.json({
-            message: `URL "${url}" has been created successfully`,
-            shortenedUrl: shortenerUrl,
-            shortCode: shortCode,
-        });
+            // Insert Information into database
+            const urlsCollection = {
+                url,
+                shortenerUrl,
+                timestamp: new Date(),
+            }
+
+            const result = await insertOne('urls', urlsCollection);
+            const clicked = 0;
+
+            res.status(200).json({
+                message: `Shortend url has been created successfully`,
+                result,
+                shortCode,
+                clicked
+            });
+        }
+
+
     } catch (error) {
         next(error);
     }

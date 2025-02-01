@@ -4,15 +4,15 @@ import path from 'path';
 // Path to the database file
 const dbFilePath = path.join(__dirname, '../../../../db.json');
 
-// Utility function to read the database
+
 async function readDB() {
     try {
         const fileContent = await fs.readFile(dbFilePath, 'utf-8');
-        return fileContent.trim() ? JSON.parse(fileContent) : { users: [] }; // Return empty structure if file is empty
+        return fileContent.trim() ? JSON.parse(fileContent) : {}; // Return empty object if file is empty
     } catch (err: any) {
         if (err.code === 'ENOENT') {
-            // File doesn't exist, initialize it
-            return { users: [] };
+            // File doesn't exist, initialize it as an empty object
+            return {};
         } else {
             throw err;
         }
