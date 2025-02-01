@@ -11,6 +11,21 @@ app.use(cors());
 app.use(helmet());
 app.use(helmet.crossOriginResourcePolicy({ policy: 'cross-origin' }));
 
+const allowedDomains = ['http://localhost:5173', 'http://url.techzaint.com', 'https://url.techzaint.com', 'http://url-server.techzaint.com', 'https://url-server.techzaint.com']; // Default to an empty array if not defined
+
+// CORS middleware
+const corsConfig = cors({
+    origin: (origin: string | undefined, callback: Function) => {
+        if (allowedDomains.includes(origin!) || !origin) {
+            callback(null, true); // Allow if the origin is in the allowed list or if there's no origin (e.g., Postman)
+        } else {
+            callback(new Error('Unauthorized: You do not have correct domain access.'));
+        }
+    },
+    credentials: true, // Enable if you want to allow cookies with the requests
+});
+
+app.use(corsConfig);
 
 app.use('/api/v1', router); //Main routes
 
