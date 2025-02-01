@@ -15,7 +15,7 @@ const authenticateJWT = (req: Request, res: Response, next: NextFunction) => {
             (req as any).user = decoded; // Attach decoded user info to request
             next(); // Proceed to the next middleware
         } catch (error) {
-            res.status(403).json({ message: "Invalid token" });
+            res.status(403).json({ message: "Invalid token or Try again.." });
         }
     }
 

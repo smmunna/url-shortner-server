@@ -11,7 +11,8 @@ const userSchema = z.object({
     email: z.string().email('Invalid email address'),
     password: z.string().min(4, 'Password at least 4 characters'),
     role: z.string(),
-    status: z.string()
+    status: z.string(),
+    verified: z.boolean()
 })
 // Creating a new user account
 const createUser = async (req: Request, res: Response, next: NextFunction) => {
