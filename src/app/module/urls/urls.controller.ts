@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from "express";
-import { insertOne } from "../../lib/dbQuery";
+import { insertOne, findOne,updateOne } from "../../lib/dbQuery";
 
 
 
@@ -15,32 +15,49 @@ const createUrls = async (req: Request, res: Response, next: NextFunction) => {
         else {
             const shortCode = Math.random().toString(36).substring(2, 8);;
             const shortenerUrl = `${req.protocol}://${req.get('host')}/` + shortCode;
+            const clicked = 0;
 
             // Insert Information into database
             const urlsCollection = {
                 url,
                 shortenerUrl,
+                clicked,
                 timestamp: new Date(),
             }
 
             const result = await insertOne('urls', urlsCollection);
-            const clicked = 0;
 
             res.status(200).json({
                 message: `Shortend url has been created successfully`,
-                result,
-                shortCode,
-                clicked
+                result
             });
         }
-
-
     } catch (error) {
         next(error);
     }
 };
 
+const redirectUrl = async (req: Request, res: Response, next: NextFunction) => {
+    const { url } = req.query
+    try {
+        const result = await findOne('urls', { shortenerUrl: url }, { timestamp: 0, id: 0, shortenerUrl: 0 });
+        if (result) {
+            // Increment click count
+            const updatedClicks = (result.clicked || 0) + 1;
+            await updateOne('urls',{shortenerUrl:url},{clicked:updatedClicks})
+            res.json({
+                message: 'Urls fetched successfully',
+                result,
+                timestamp: new Date()
+            })
+        }
+    }
+    catch (error) {
+        next(error)
+    }
+}
 
 export const urlsController = {
     createUrls,
+    redirectUrl
 };
