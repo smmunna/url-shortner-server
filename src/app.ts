@@ -11,7 +11,7 @@ app.use(cors());
 app.use(helmet());
 app.use(helmet.crossOriginResourcePolicy({ policy: 'cross-origin' }));
 
-const allowedDomains = ['http://localhost:5173', 'http://url.techzaint.com', 'https://url.techzaint.com', 'http://url-server.techzaint.com', 'https://url-server.techzaint.com']; // Default to an empty array if not defined
+const allowedDomains = ['http://localhost:5173', 'http://url.techzaint.com', 'https://url.techzaint.com']; // Default to an empty array if not defined
 
 // CORS middleware
 const corsConfig = cors({
