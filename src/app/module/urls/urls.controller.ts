@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from "express";
-import { insertOne, findOne, updateOne } from "../../lib/dbQuery";
+import { insertOne, findOne, updateOne, paginate } from "../../lib/dbQuery";
 
 
 
@@ -59,8 +59,17 @@ const redirectUrl = async (req: Request, res: Response, next: NextFunction) => {
     }
 }
 
-const myShortendUrl = async(req:Request, res:Response, next:NextFunction) => {
-
+const myShortendUrl = async (req: Request, res: Response, next: NextFunction) => {
+    const { email, page, limit } = req.query
+    try {
+        const result = await paginate('urls', { email: email }, {}, { page: Number(page), limit: Number(limit), sortField: 'timestamp', sortOrder: 'desc' });
+        res.json({
+            message: 'Urls fetched successfully',
+            result
+        })
+    } catch (error) {
+        next(error)
+    }
 }
 
 export const urlsController = {
