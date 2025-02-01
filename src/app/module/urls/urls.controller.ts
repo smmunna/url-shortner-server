@@ -1,11 +1,11 @@
 import { NextFunction, Request, Response } from "express";
-import { insertOne, findOne,updateOne } from "../../lib/dbQuery";
+import { insertOne, findOne, updateOne } from "../../lib/dbQuery";
 
 
 
 const createUrls = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const { url } = req.body;
+        const { url, email } = req.body;
 
         if (!url) {
             res.status(404).json({
@@ -21,6 +21,7 @@ const createUrls = async (req: Request, res: Response, next: NextFunction) => {
             const urlsCollection = {
                 url,
                 shortenerUrl,
+                email,
                 clicked,
                 timestamp: new Date(),
             }
@@ -38,16 +39,17 @@ const createUrls = async (req: Request, res: Response, next: NextFunction) => {
 };
 
 const redirectUrl = async (req: Request, res: Response, next: NextFunction) => {
-    const { url } = req.query
+    const { url, email } = req.query
     try {
         const result = await findOne('urls', { shortenerUrl: url }, { timestamp: 0, id: 0, shortenerUrl: 0 });
         if (result) {
             // Increment click count
             const updatedClicks = (result.clicked || 0) + 1;
-            await updateOne('urls',{shortenerUrl:url},{clicked:updatedClicks})
+            await updateOne('urls', { shortenerUrl: url }, { clicked: updatedClicks })
             res.json({
                 message: 'Urls fetched successfully',
                 result,
+                email,
                 timestamp: new Date()
             })
         }
@@ -57,7 +59,12 @@ const redirectUrl = async (req: Request, res: Response, next: NextFunction) => {
     }
 }
 
+const myShortendUrl = async(req:Request, res:Response, next:NextFunction) => {
+
+}
+
 export const urlsController = {
     createUrls,
-    redirectUrl
+    redirectUrl,
+    myShortendUrl,
 };
