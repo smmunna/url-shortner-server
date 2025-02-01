@@ -62,7 +62,7 @@ const redirectUrl = async (req: Request, res: Response, next: NextFunction) => {
 const myShortendUrl = async (req: Request, res: Response, next: NextFunction) => {
     const { email, page, limit } = req.query
     try {
-        const result = await paginate('urls', { email: email }, {}, { page: Number(page), limit: Number(limit), sortField: 'timestamp', sortOrder: 'desc' });
+        const result = await paginate('urls', { email: email }, {}, { page: Number(page) || 1, limit: Number(limit) || 10, sortField: 'timestamp', sortOrder: 'desc' });
         res.json({
             message: 'Urls fetched successfully',
             result
