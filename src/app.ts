@@ -7,11 +7,10 @@ const app = express()
 app.use(express.json());
 app.use(cors());
 
-// Helmet for Security purpose, hiding the 'Express' server name from Header
 app.use(helmet());
 app.use(helmet.crossOriginResourcePolicy({ policy: 'cross-origin' }));
 
-const allowedDomains = ['http://localhost:5173', 'http://url.techzaint.com', 'https://url.techzaint.com']; // Default to an empty array if not defined
+const allowedDomains = ['http://localhost:5173','https://shortner.techzaint.com']; 
 
 // CORS middleware
 const corsConfig = cors({
