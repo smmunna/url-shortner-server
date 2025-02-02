@@ -14,13 +14,14 @@ const createUrls = async (req: Request, res: Response, next: NextFunction) => {
         }
         else {
             const shortCode = Math.random().toString(36).substring(2, 8);;
-            const shortenerUrl = `${req.protocol}://${req.get('host')}/` + shortCode;
+            const shortenerUrl = `${req.protocol}://${req.get('host')}/api/v1/urls/` + shortCode;
             const clicked = 0;
 
             // Insert Information into database
             const urlsCollection = {
                 url,
                 shortenerUrl,
+                shortCode,
                 email,
                 clicked,
                 timestamp: new Date(),
@@ -39,18 +40,18 @@ const createUrls = async (req: Request, res: Response, next: NextFunction) => {
 };
 
 const redirectUrl = async (req: Request, res: Response, next: NextFunction) => {
-    const { url, email } = req.query
+    const shortCode = req.params.shortCode;
     try {
-        const result = await findOne('urls', { shortenerUrl: url }, { timestamp: 0, id: 0, shortenerUrl: 0 });
+        const result = await findOne('urls', { shortCode: shortCode });
         if (result) {
             // Increment click count
             const updatedClicks = (result.clicked || 0) + 1;
-            await updateOne('urls', { shortenerUrl: url }, { clicked: updatedClicks })
-            res.json({
-                message: 'Urls fetched successfully',
-                result,
-                email,
-                timestamp: new Date()
+            await updateOne('urls', { shortCode: shortCode }, { clicked: updatedClicks })
+
+            return res.redirect(301, result.url);
+        } else {
+            res.status(404).json({
+                message: 'Shortened URL not found',
             })
         }
     }

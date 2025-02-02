@@ -27,6 +27,7 @@ const corsConfig = cors({
 
 app.use(corsConfig);
 
+
 app.use('/api/v1', router); //Main routes
 
 app.get('/', (req, res) => {
