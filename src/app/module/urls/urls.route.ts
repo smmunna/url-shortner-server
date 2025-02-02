@@ -6,5 +6,5 @@ const router = express.Router();
 
 router.post('/', urlsController.createUrls);
 router.get('/:shortCode', urlsController.redirectUrl);
-router.get('/my-urls', authenticateJWT, urlsController.myShortendUrl);
+router.get('/my-urls/all', urlsController.myShortendUrl);
 export const urlsRoutes = router;
